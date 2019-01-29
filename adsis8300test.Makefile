@@ -57,8 +57,12 @@ APPDB:=$(APP)/Db
 APPSRC:=$(APP)/src
 
 
-TEMPLATES += $(APPDB)/SIS8300.template
-TEMPLATES += $(APPDB)/SIS8300N.template
+TEMPLATES += $(APPDB)/sis8300.template
+TEMPLATES += $(APPDB)/sis8300N.template
+TEMPLATES += $(APPDB)/sis8300Process.template
+TEMPLATES += $(APPDB)/sis8300ROI.template
+TEMPLATES += $(APPDB)/sis8300SigGen.template
+TEMPLATES += $(APPDB)/sis8300Stats.template
 
 USR_INCLUDES += -I$(where_am_I)$(APPSRC)
 
