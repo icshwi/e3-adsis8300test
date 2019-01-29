@@ -35,71 +35,69 @@ include $(E3_REQUIRE_CONFIG)/DECOUPLE_FLAGS
 # one should look at other modules makefile to add more
 # In most case, one should ignore the following lines:
 
-#ifneq ($(strip $(ASYN_DEP_VERSION)),)
-#asyn_VERSION=$(ASYN_DEP_VERSION)
-#endif
+ifneq ($(strip $(ASYN_DEP_VERSION)),)
+asyn_VERSION=$(ASYN_DEP_VERSION)
+endif
 
-#ifneq ($(strip $(SEQUENCER_DEP_VERSION)),)
-#sequencer_VERSION=$(SEQUENCER_DEP_VERSION)
-#endif
+ifneq ($(strip $(ADCORE_DEP_VERSION)),)
+ADCore_VERSION=$(ADCORE_DEP_VERSION)
+endif
 
+ifneq ($(strip $(ADSUPPORT_DEP_VERSION)),)
+ADSupport_VERSION=$(ADSUPPORT_DEP_VERSION)
+endif
 
 
 ## Exclude linux-ppc64e6500
-##EXCLUDE_ARCHS = linux-ppc64e6500
+EXCLUDE_ARCHS = linux-ppc64e6500
 
 
-# APP:=calcApp
-# APPDB:=$(APP)/Db
-# APPSRC:=$(APP)/src
+APP:=sis8300App
+APPDB:=$(APP)/Db
+APPSRC:=$(APP)/src
 
 
-# USR_INCLUDES += -I$(where_am_I)$(APPSRC)
+TEMPLATES += $(APPDB)/SIS8300.template
+TEMPLATES += $(APPDB)/SIS8300N.template
 
-# USR_CFLAGS   += -Wno-unused-variable
-# USR_CFLAGS   += -Wno-unused-function
-# USR_CFLAGS   += -Wno-unused-but-set-variable
-# USR_CPPFLAGS += -Wno-unused-variable
-# USR_CPPFLAGS += -Wno-unused-function
-# USR_CPPFLAGS += -Wno-unused-but-set-variable
-
-# TEMPLATES += $(wildcard $(APPDB)/*.db)
-# TEMPLATES += $(wildcard $(APPDB)/*.db)
-# TEMPLATES += $(wildcard $(APPDB)/*.proto)
-# TEMPLATES += $(wildcard $(APPDB)/*.template)
+USR_INCLUDES += -I$(where_am_I)$(APPSRC)
 
 
-# DBDINC_SRCS += $(APPSRC)/swaitRecord.c
-# DBDINC_SRCS += $(APPSRC)/sseqRecord.c
-# DBDINC_SRCS += $(APPSRC)/aCalcoutRecord.c
-# DBDINC_SRCS += $(APPSRC)/sCalcoutRecord.c
-# DBDINC_SRCS += $(APPSRC)/transformRecord.c
-
-# DBDINC_DBDS = $(subst .c,.dbd,   $(DBDINC_SRCS:$(APPSRC)/%=%))
-# DBDINC_HDRS = $(subst .c,.h,     $(DBDINC_SRCS:$(APPSRC)/%=%))
-# DBDINC_DEPS = $(subst .c,$(DEP), $(DBDINC_SRCS:$(APPSRC)/%=%))
+HEADERS += $(APPSRC)/sis8300.h
+SOURCES += $(APPSRC)/sis8300.cpp
+DBDS    += $(APPSRC)/sis8300Support.dbd
 
 
-# HEADERS += $(APPSRC)/sCalcPostfix.h
-# HEADERS += $(APPSRC)/aCalcPostfix.h
-# HEADERS += $(DBDINC_HDRS)
+USR_LIBS += udev
+USR_LIBS += rt
 
 
-# SOURCES += $(APPSRC)/sCalcPostfix.c
-# SOURCES += $(APPSRC)/sCalcPerform.c
-# SOURCES += $(APPSRC)/aCalcPostfix.c
-# SOURCES += $(APPSRC)/aCalcPerform.c
+SIS8300VENDOR_SRC:=vendor/ess
+SIS8300DRV:=$(SIS8300VENDOR_SRC)/lib
 
-# SOURCES += $(APPSRC)/calcUtil.c
-# SOURCES += $(APPSRC)/myFreeListLib.c
-# SOURCES += $(APPSRC)/devsCalcoutSoft.c
-# SOURCES += $(APPSRC)/devaCalcoutSoft.c
-# SOURCES += $(APPSRC)/subAve.c
-# SOURCES += $(APPSRC)/swaitRecord.c
-# SOURCES += $(APPSRC)/editSseq.st
-# SOURCES += $(APPSRC)/interp.c
-# SOURCES += $(APPSRC)/arrayTest.c
-# SOURCES += $(APPSRC)/aCalcMonitorMem.c
+USR_INCLUDES += -I$(where_am_I)$(SIS8300DRV)
+
+HEADERS += $(SIS8300DRV)/sis8300drv.h
+HEADERS += $(SIS8300DRV)/sis8300_defs.h
+HEADERS += $(SIS8300DRV)/sis8300_reg.h
+HEADERS += $(SIS8300DRV)/sis8300drv_utils.h
+HEADERS += $(SIS8300DRV)/sis8300drv_list.h
+
+
+SOURCES += $(SIS8300DRV)/sis8300drv.c
+SOURCES += $(SIS8300DRV)/sis8300drv_ad9510.c
+SOURCES += $(SIS8300DRV)/sis8300drv_flash.c
+SOURCES += $(SIS8300DRV)/sis8300drv_rtm.c
+SOURCES += $(SIS8300DRV)/sis8300drv_utils.c
+
+# Exclude objs, srcs, dep files
+FILTER = %.o %.c %.d
+# Whether there are files or not, driver.Makefile doesn't return "No rule to make target"
+#
+BINS += $(filter-out $(FILTER), $(wildcard $(where_am_I)$(SIS8300VENDOR_SRC)/sis8300drv_*))
+BINS += $(wildcard $(where_am_I)$(SIS8300VENDOR_SRC)/tools/utils/sis8300_*)
+
+
 # # DBDINC_SRCS should be last of the series of SOURCES
 # SOURCES += $(DBDINC_SRCS)
 
